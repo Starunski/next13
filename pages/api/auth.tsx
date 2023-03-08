@@ -3,16 +3,34 @@ import type { NextApiRequest, NextApiResponse } from "next";
 type ResponseData = {
   message: string;
   data?: any;
+  success?: boolean;
+  token?: string;
 };
+
+const userDataBase = [
+  { login: "admin", password: "admin" },
+  { login: "user", password: "user" },
+];
 
 export default function handler(
   req: NextApiRequest,
   res: NextApiResponse<ResponseData>
 ) {
   if (req.method === "POST") {
-    res.status(200).json({ message: "Hello from Next.js!", data: req.body });
-  } else {
-    res.status(200).json({ message: "Hello from Next.js!" });
+    const { login, password } = req.body;
+    console.log({ login, password });
+
+    if (
+      userDataBase.find((el) => el.login === login && el.password === password)
+    ) {
+      res
+        .status(200)
+        .json({ success: true, message: `Hello ${login}!`, data: req.body , token: "Starunski secret token"});
+    } else {
+      res
+        .status(200)
+        .json({ success: false, message: `Error , wrong login or password!`, data: req.body });
+    }
   }
 }
 
